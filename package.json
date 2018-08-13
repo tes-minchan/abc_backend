@@ -1,0 +1,39 @@
+{
+  "name": "abc_backend",
+  "version": "1.0.0",
+  "description": "ABC Project Backend Server",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tes-minchan/abc_backend.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/tes-minchan/abc_backend/issues"
+  },
+  "homepage": "https://github.com/tes-minchan/abc_backend#readme",
+  "dependencies": {
+    "async": "^2.6.1",
+    "axios": "^0.18.0",
+    "body-parser": "^1.18.3",
+    "coinone-api": "^1.8.0",
+    "cors": "^2.8.4",
+    "crypto": "^1.0.1",
+    "crypto-js": "^3.1.9-1",
+    "express": "^4.16.3",
+    "jsonwebtoken": "^8.3.0",
+    "korbit-node-client": "^1.0.4",
+    "mysql": "^2.16.0",
+    "pbkdf2-password": "^1.2.1",
+    "querystring": "^0.2.0",
+    "request": "^2.87.0",
+    "then-request": "^6.0.0",
+    "underscore": "^1.9.1",
+    "uuid": "^3.3.2"
+  }
+}
