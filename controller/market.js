@@ -40,6 +40,7 @@ module.exports = {
             res.status(403).json(utils.resFail(error));
           }
           else {
+            // console.log(market_balance.upit.KRW)
             res.status(200).json(utils.resSuccess(market_balance));
           }
         });
