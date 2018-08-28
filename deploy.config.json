@@ -1,0 +1,11 @@
+{
+  "apps": [
+    {
+      "name": "abc_backend",
+      "script": "./src",
+      "env": {
+        "NODE_PATH": "src"
+      }
+    }
+  ]
+}

@@ -47,49 +47,49 @@ module.exports = {
       ...req.body
     };
 
-    // if (orderInfo.market === "UPBIT") {
-    //   UpbitAPI.sendOrder(orderInfo, (error, result) => {
-    //     if(error) {
-    //       res.status(500).json(utils.resFail(error));
-    //     }
-    //     else {
-    //       res.status(200).json(utils.resSuccess(result));
-    //     }
-    //   });
-    // } 
-    // else if (orderInfo.market === "COINONE") {
-    //   CoinoneAPI.sendOrder(orderInfo, (error, result) => {
-    //     if(error) {
-    //       res.status(500).json(utils.resFail(error));
-    //     }
-    //     else {
-    //       res.status(200).json(utils.resSuccess(result));
-    //     }
-    //   });
-    // }
-    // else if (orderInfo.market === "GOPAX") {
-    //   GopaxAPI.sendOrder(orderInfo, (error, result) => {
-    //     if(error) {
-    //       res.status(500).json(utils.resFail(error));
+    if (orderInfo.market === "UPBIT") {
+      ctrlUpbit.sendOrder(orderInfo, (error, result) => {
+        if(error) {
+          res.status(500).json(utils.resFail(error));
+        }
+        else {
+          res.status(200).json(utils.resSuccess(result));
+        }
+      });
+    } 
+    else if (orderInfo.market === "COINONE") {
+      ctrlCoinone.sendOrder(orderInfo, (error, result) => {
+        if(error) {
+          res.status(500).json(utils.resFail(error));
+        }
+        else {
+          res.status(200).json(utils.resSuccess(result));
+        }
+      });
+    }
+    else if (orderInfo.market === "GOPAX") {
+      ctrlGopax.sendOrder(orderInfo, (error, result) => {
+        if(error) {
+          res.status(500).json(utils.resFail(error));
 
-    //     }
-    //     else {
-    //       res.status(200).json(utils.resSuccess(result));
+        }
+        else {
+          res.status(200).json(utils.resSuccess(result));
 
-    //     }
-    //   });
-    // }
-    // else if (orderInfo.market === "BITHUMB"){
-    //   BithumbAPI.sendOrder(orderInfo, (error, result) => {
-    //     if(error) {
-    //       res.status(500).json(utils.resFail(error));
-    //     }
-    //     else {
-    //       res.status(200).json(utils.resSuccess(result));
-    //     }
-    //   });
+        }
+      });
+    }
+    else if (orderInfo.market === "BITHUMB"){
+      ctrlBithumb.sendOrder(orderInfo, (error, result) => {
+        if(error) {
+          res.status(500).json(utils.resFail(error));
+        }
+        else {
+          res.status(200).json(utils.resSuccess(result));
+        }
+      });
 
-    // }
+    }
   },
 
   setOrderSendResult: function(req, res) {
