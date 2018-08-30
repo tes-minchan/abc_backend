@@ -1,6 +1,6 @@
 
 const { upbitAPI } = require('lib/API');
-const { schemaCheck } = require('./common');
+const { schemaCheck, ctrlOrderinfo } = require('./common');
 
 const async = require("async");
 const db = require("lib/db");
@@ -17,25 +17,25 @@ module.exports = {
       const apiKey    = keyCheck.message.apikey;
       const secretKey = keyCheck.message.apisecret;
 
-      upbitAPI.getBalance(apiKey, secretKey)
-      .then(res => {
-        let toSendList = {};
-
-        res.forEach(coin => {
-          toSendList[coin.currency] = {
-            balance: Number(coin.balance),
-            locked: Number(coin.locked),
-            available: Number(coin.balance)
-          };
-        });
-
-        result.UPBIT = toSendList;
-        callback(null);
-      })
-      .catch(error => {
-        callback(error);
+      upbitAPI.getBalance(apiKey, secretKey, (error, res) => {
+        if(error) {
+          callback(error);
+        }
+        else {
+          let toSendList = {};
+  
+          res.forEach(coin => {
+            toSendList[coin.currency] = {
+              balance: Number(coin.balance),
+              locked: Number(coin.locked),
+              available: Number(coin.balance)
+            };
+          });
+  
+          result.UPBIT = toSendList;
+          callback(null);
+        }
       });
-
     }
 
   },
@@ -58,6 +58,16 @@ module.exports = {
             callback(error);
           } 
           else {
+            const saveOrderinfo = {
+              market   : 'UPBIT',
+              uuid     : userinfo.uuid,
+              order_id : result.uuid,
+              side     : userinfo.side,
+              currency : userinfo.coin,
+              price    : userinfo.price,
+              volume   : userinfo.volume
+            }
+            ctrlOrderinfo.updateOrderID(saveOrderinfo);
             callback(null, result);
           }
         }

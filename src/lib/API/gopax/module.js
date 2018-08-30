@@ -1,60 +1,27 @@
-const crypto    = require('crypto');
-const request   = require('request');
 const ErrorCode = require('./errorCode');
+const gopaxAPI  = require('./gopaxAPI');
 
-
-const BASE_URL  = 'https://api.gopax.co.kr';
 
 module.exports = {
 
-  getBalance : function (ACCESS_TOKEN, SECRET_KEY, cb) {
-    
-    // nonce값 생성
-    let nonce = Date.now() * 1000;
-    let method = 'GET';
-    let requestPath = '/balances';
+  getBalance : async function (ACCESS_TOKEN, SECRET_KEY, callback) {
 
-    // 필수 정보를 연결하여 prehash 문자열을 생성함
-    let what = nonce + method + requestPath;
-    // base64로 secret을 디코딩함
-    let key = Buffer(SECRET_KEY, 'base64');
-    // secret으로 sha512 hmac을 생성함
-    let hmac = crypto.createHmac('sha512', key);
-    let sign = hmac.update(what).digest('base64');
+    const GopaxAPI = new gopaxAPI(ACCESS_TOKEN, SECRET_KEY);
 
-    let options = {
-      method,
-      json: true,
-      url: `${BASE_URL}${requestPath}`,
-      headers: {
-        'API-KEY': ACCESS_TOKEN,
-        Signature: sign,
-        Nonce: nonce,
-      },
-      strictSSL: false,
-    };
-
-    request(options, (err, response, result) => {
-      if (err) {
-        cb(err);
-      }
-      else {
-        cb(null, result);
-      }
-    });
-
+    GopaxAPI.getBalance()
+      .then(result => {
+        callback(null, result);
+      })
+      .catch(error => {
+        callback(error);
+      });
   },
 
   setOrders : function(getOrderInfo, callback) {
 
-    const _ACCESS_TOKEN = getOrderInfo.apikey;
-    const _SECRET_KEY   = getOrderInfo.apisecret;
+    const GopaxAPI = new gopaxAPI(getOrderInfo.apikey, getOrderInfo.apisecret);
 
-    // nonce값 생성
-    let nonce = Date.now() * 1000;
-    let method = 'POST';
-    let requestPath = '/orders';
-    let json_body = {
+    const payload = {
       amount : getOrderInfo.volume,
       price  : getOrderInfo.price,
       side   : getOrderInfo.side.toLowerCase(),
@@ -62,45 +29,32 @@ module.exports = {
       type   : 'limit'
     }
 
-    let body = JSON.stringify(json_body, Object.keys(json_body).sort());
-
-    // 필수 정보를 연결하여 prehash 문자열을 생성함
-    let what = nonce + method + requestPath + body;
-    // base64로 secret을 디코딩함
-    let key = Buffer(_SECRET_KEY, 'base64');
-    // secret으로 sha512 hmac을 생성함
-    let hmac = crypto.createHmac('sha512', key);
-    let sign = hmac.update(what).digest('base64');
-
-    let options = {
-      method,
-      body: json_body,
-      json: true,
-      url: `${BASE_URL}${requestPath}`,
-      headers: {
-        'API-KEY': _ACCESS_TOKEN,
-        Signature: sign,
-        Nonce: nonce
-      },
-      strictSSL: false,
-    };
-
-    request(options, (err, response, result) => {
-      if (err) {
-        callback(err);
-      }
-      else {
+    GopaxAPI.sendOrder(payload)
+      .then(result => {
         if(result.errorCode) {
           callback(ErrorCode[result.errorCode])
         }
         else {
           callback(null, result);
         }
-      }
-    });
-
+      })
+      .catch(error => {
+        callback(error);
+      });
 
   },
+
+  getOrderInfo : function(getOrderInfo, callback) {
+    const GopaxAPI = new gopaxAPI(getOrderInfo.apikey, getOrderInfo.apisecret);
+
+    GopaxAPI.getOrderinfoByID(getOrderInfo.order_id)
+    .then(result => {
+      callback(null, result);
+    })
+    .catch(error => {
+      callback(error);
+    });
+  }
 
 }
 

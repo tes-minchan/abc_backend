@@ -2,18 +2,22 @@ const async = require("async");
 const db = require("lib/db");
 const dbQuery = require("lib/dbquery/market");
 const utils = require("lib/utils");
+const {ctrlOrderinfo} = require("lib/ctrlAPI/common");
 
 const { ctrlBithumb, ctrlCoinone, ctrlUpbit, ctrlGopax } = require('lib/ctrlAPI');
 
 module.exports = {
 
   getAllBalance: function(req, res) {
-    let userinfo = {
+    const userinfo = {
       uuid: req.decoded.uuid
     };
 
     async.waterfall(
-      [db.getConnection, async.apply(dbQuery.getApiKeys, userinfo)],
+      [
+        db.getConnection, 
+        async.apply(dbQuery.getApiKeys, userinfo)
+      ],
       function(err, connection, result) {
         connection.release();
 
@@ -50,7 +54,7 @@ module.exports = {
     if (orderInfo.market === "UPBIT") {
       ctrlUpbit.sendOrder(orderInfo, (error, result) => {
         if(error) {
-          res.status(500).json(utils.resFail(error));
+          res.status(403).json(utils.resFail(error));
         }
         else {
           res.status(200).json(utils.resSuccess(result));
@@ -60,7 +64,7 @@ module.exports = {
     else if (orderInfo.market === "COINONE") {
       ctrlCoinone.sendOrder(orderInfo, (error, result) => {
         if(error) {
-          res.status(500).json(utils.resFail(error));
+          res.status(403).json(utils.resFail(error));
         }
         else {
           res.status(200).json(utils.resSuccess(result));
@@ -70,7 +74,7 @@ module.exports = {
     else if (orderInfo.market === "GOPAX") {
       ctrlGopax.sendOrder(orderInfo, (error, result) => {
         if(error) {
-          res.status(500).json(utils.resFail(error));
+          res.status(403).json(utils.resFail(error));
 
         }
         else {
@@ -82,7 +86,7 @@ module.exports = {
     else if (orderInfo.market === "BITHUMB"){
       ctrlBithumb.sendOrder(orderInfo, (error, result) => {
         if(error) {
-          res.status(500).json(utils.resFail(error));
+          res.status(403).json(utils.resFail(error));
         }
         else {
           res.status(200).json(utils.resSuccess(result));
@@ -92,16 +96,32 @@ module.exports = {
     }
   },
 
-  setOrderSendResult: function(req, res) {
+    
+  updateOrderinfo: function(req, res, next) {
 
-    if(req.ordersend.status) {
-      res.status(200).json(utils.resSuccess(req.ordersend));
-    }
-    else {
-      res.status(500).json(utils.resFail(req.ordersend.desc));
+    const userinfo = {
+      uuid: req.decoded.uuid
+    };
 
-    }
+    async.waterfall(
+      [
+        db.getConnection, 
+        async.apply(dbQuery.getApiKeys, userinfo),
+        async.apply(dbQuery.getOrderinfo, userinfo),
+        async.apply(ctrlOrderinfo.updateOrder, userinfo)
+      ], (error, connection, result) =>  {
+        connection.release();
+        if(error) {
+          res.status(403).json(utils.resFail(error));
+        }
+        else {
+          res.status(200).json(utils.resSuccess("success"));
+        }
 
 
-  }
+    });
+
+  },
+
+ 
 };

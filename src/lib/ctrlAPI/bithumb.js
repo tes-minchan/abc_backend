@@ -1,5 +1,5 @@
 const { bithumbAPI } = require('lib/API');
-const { schemaCheck } = require('./common');
+const { schemaCheck, ctrlOrderinfo } = require('./common');
 
 const async = require("async");
 const dbQuery = require("lib/dbquery/market");
@@ -75,7 +75,19 @@ module.exports = {
             callback(error);
           } 
           else {
-            callback(null, result);
+
+            const saveOrderinfo = {
+              market   : 'BITHUMB',
+              uuid     : userinfo.uuid,
+              order_id : result.order_id,
+              side     : userinfo.side,
+              currency : userinfo.coin,
+              price    : userinfo.price,
+              volume   : userinfo.volume
+            }
+
+            ctrlOrderinfo.updateOrderID(saveOrderinfo);
+            callback(null, result.data);
           }
         }
       );

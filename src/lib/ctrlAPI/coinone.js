@@ -1,5 +1,5 @@
 const { coinoneAPI } = require('lib/API');
-const { schemaCheck } = require('./common');
+const { schemaCheck, ctrlOrderinfo } = require('./common');
 
 const _ = require('underscore');
 const db = require("lib/db");
@@ -69,6 +69,17 @@ module.exports = {
             callback(error);
           } 
           else {
+            const saveOrderinfo = {
+              market   : 'COINONE',
+              uuid     : userinfo.uuid,
+              order_id : result.orderId,
+              side     : userinfo.side,
+              currency : userinfo.coin,
+              price    : userinfo.price,
+              volume   : userinfo.volume
+            }
+
+            ctrlOrderinfo.updateOrderID(saveOrderinfo);
             callback(null, result);
           }
         }
@@ -76,5 +87,8 @@ module.exports = {
     }
 
   },
+
+
+  
 
 }

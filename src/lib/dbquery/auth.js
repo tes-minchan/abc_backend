@@ -30,14 +30,14 @@ module.exports = {
           ERR_MSG.title = "[DB][ERROR][registerUser]";
           ERR_MSG.description = "Interanal Error";
 
-          return callback(ERR_MSG, connection);
+          callback(ERR_MSG, connection);
         }
         else {
           if (results.length) {
             ERR_MSG.title = "[USER_REGISTER][FAIL]";
             ERR_MSG.description = "ID is already exist !!!";
 
-            return callback(ERR_MSG, connection);
+            callback(ERR_MSG, connection);
           } else {
             hasher({ password : userinfo.password }, function(err, pass, salt, hash){
               userinfo.uuid = uuidv1();
@@ -54,10 +54,10 @@ module.exports = {
                     ERR_MSG.title = "[DB][ERROR]";
                     ERR_MSG.description = "Interanal Error";
 
-                    return callback(ERR_MSG, connection);
+                    callback(ERR_MSG, connection);
                   }
                   else {
-                    return callback(null, connection);
+                    callback(null, connection);
                   }
                 });
             });
@@ -103,13 +103,13 @@ module.exports = {
             ERR_MSG.title = "[DB][ERROR]";
             ERR_MSG.description = "Interanal Error";
 
-            return callback(ERR_MSG, connection);
+            callback(ERR_MSG, connection);
           } else {
             if(!results.length) {
               ERR_MSG.title = "[USER_REGISTER][FAIL]";
               ERR_MSG.description = "ID is not registered !!!";
 
-              return callback(ERR_MSG, connection);
+              callback(ERR_MSG, connection);
             }
             else {
               hasher({ password : userinfo.password , salt :results[0].password_salt }, function(err, pass, salt, hash){
@@ -127,13 +127,13 @@ module.exports = {
                     config.jwtoption
                   );
 
-                  return callback(null, connection, newToken);
+                  callback(null, connection, newToken);
                 }
                 else {
                   ERR_MSG.title = "[USER_REGISTER][FAIL]";
                   ERR_MSG.description = "Wrong Password !!!";
 
-                  return callback(ERR_MSG, connection);
+                  callback(ERR_MSG, connection);
                 }
               });
             }

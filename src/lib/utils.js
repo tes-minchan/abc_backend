@@ -6,10 +6,10 @@ var utils = {
     };
   },
 
-  resFail: function(message) {
+  resFail: function(data) {
     return {
       success: false,
-      message: message,
+      message: data,
     };
   },
 

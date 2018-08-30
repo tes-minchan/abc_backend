@@ -5,70 +5,64 @@ const REQUEST  = require('request');
 
 const BASE_URL = 'https://api.upbit.com/v1';
 
+
+const upbitAPI = require('./upbitAPI');
+
+
+
+
+
 module.exports = {
 
-  getBalance : function (ACCESS_TOKEN, SECRET_KEY) {
+  getBalance : function (ACCESS_TOKEN, SECRET_KEY, callback) {
+    const UpbitAPI = new upbitAPI(ACCESS_TOKEN, SECRET_KEY);
 
-    const payload = {access_key: ACCESS_TOKEN , nonce: (new Date).getTime()};
-    const token = sign(payload, SECRET_KEY);
+    UpbitAPI.getBalances()
+      .then(res => {
+        callback(null, JSON.parse(res))
+      })
+      .catch(error => {
+        callback(error);
+      });
 
-    return axios.get(
-      `${BASE_URL}/accounts`,
-      {
-        headers: {'Authorization': `Bearer ${token}`}
-      }
-    ).then(res => res.data)
-    .catch(error => {
-      throw error
-    });
 
   },
 
   setOrders : function(getOrderInfo, callback) {
-    const _ACCESS_TOKEN = getOrderInfo.apikey;
-    const _SECRET_KEY   = getOrderInfo.apisecret;
 
-    const orderinfo = {
+    const UpbitAPI = new upbitAPI(getOrderInfo.apikey, getOrderInfo.apisecret);
+
+    const payload = {
       market : `KRW-${getOrderInfo.coin.toUpperCase()}`,
-      side   : getOrderInfo.side.toUpperCase() === 'BUY' ? 'ask' : 'bid',
+      side   : getOrderInfo.side.toUpperCase() === 'BUY' ? 'bid' : 'ask',
       volume : getOrderInfo.volume,
       price  : getOrderInfo.price,
       ord_type : "limit"
     }
 
-    const query = queryEncode(orderinfo);
-    const payload = {
-      access_key: _ACCESS_TOKEN, 
-      nonce : (new Date).getTime(),
-      query : query
-    };
-
-    const token = sign(payload, _SECRET_KEY);
-
-    var options = {
-      method: "POST",
-      url: `${BASE_URL}/orders`,
-      headers: {Authorization: `Bearer ${token}`},
-      json: orderinfo
-    };
-
-    REQUEST(options, function (error, response, body) {
-      if (error) {
+    UpbitAPI.sendOrder(payload)
+      .then(res => {
+        callback(null, res)
+      })
+      .catch(error => {
         callback(error);
-      }
-      else {
-        if(body.error) {
-          callback(body.error.message);
-        }
-        else {
-          callback(null, body);
-        }
+      });
 
-      }
-    });
 
   },
 
+  getOrderInfo : function(getOrderInfo, callback) {
+
+    const UpbitAPI = new upbitAPI(getOrderInfo.apikey, getOrderInfo.apisecret);
+
+    UpbitAPI.getOrderinfoByID(getOrderInfo.order_id)
+      .then(res => {
+        callback(null, res)
+      })
+      .catch(error => {
+        callback(error);
+      });
+  }
 }
 
 

@@ -1,5 +1,5 @@
 var mysql = require("mysql");
-var config = require("../config");
+var config = require("config");
 
 // IDEA: MySql Server INFO and Connection.
 var mysqlconn = mysql.createPool(config.mysqlConfig);

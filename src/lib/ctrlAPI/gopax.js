@@ -1,5 +1,5 @@
 const { gopaxAPI } = require('lib/API');
-const { schemaCheck } = require('./common');
+const { schemaCheck, ctrlOrderinfo } = require('./common');
 
 const async = require("async");
 const dbMarket = require("lib/dbquery/market");
@@ -57,6 +57,18 @@ module.exports = {
             callback(error);
           } 
           else {
+
+            const saveOrderinfo = {
+              market   : 'GOPAX',
+              uuid     : userinfo.uuid,
+              order_id : result.id,
+              side     : userinfo.side,
+              currency : userinfo.coin,
+              price    : userinfo.price,
+              volume   : userinfo.volume
+            }
+
+            ctrlOrderinfo.updateOrderID(saveOrderinfo);
             callback(null, result);
           }
         }

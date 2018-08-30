@@ -11,6 +11,7 @@ module.exports = {
   '101' : "Invalid format",
   '102' : "ID is not exist",
   '103' : "Lack of Balance",
+  '104' : "Order id is not exist",
   '105' : "Price is not correct",
   '107' : "Parameter error",
   '108' : "Quantity is too low",

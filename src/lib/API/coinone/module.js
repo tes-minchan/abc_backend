@@ -1,9 +1,10 @@
-const CoinoneAPI = require('coinone-api');
+// const CoinoneAPI = require('coinone-api');
 const ErrorCode  = require('./errorCode');
+const CoinoneAPI = require('./coinoneAPI');
 
 module.exports = {
 
-  getBalance : function (ACCESS_TOKEN, SECRET_KEY, callback) {
+  getBalance : (ACCESS_TOKEN, SECRET_KEY, callback) => {
     let coinoneAPI = new CoinoneAPI(ACCESS_TOKEN,SECRET_KEY);
 
     coinoneAPI.balance().then(res => {
@@ -18,12 +19,12 @@ module.exports = {
     
   },
 
-  setOrders : function(getOrderInfo, callback) {
+  setOrders : (getOrderInfo, callback) => {
 
     const coinoneAPI = new CoinoneAPI(getOrderInfo.apikey, getOrderInfo.apisecret);
-    let currency = getOrderInfo.coin.toLowerCase();
-    let price    = Number(getOrderInfo.price);
-    let qty      = Number(getOrderInfo.volume);
+    const currency = getOrderInfo.coin.toLowerCase();
+    const price    = Number(getOrderInfo.price);
+    const qty      = Number(getOrderInfo.volume);
 
     if(getOrderInfo.side.toUpperCase() === 'BUY') {
       coinoneAPI.limitBuy(currency, price, qty)
@@ -50,7 +51,22 @@ module.exports = {
     
   },
 
+  getOrderInfo : (getOrderInfo, callback) => {
+
+    const coinoneAPI = new CoinoneAPI(getOrderInfo.apikey, getOrderInfo.apisecret);
+    const currency   = getOrderInfo.currency.toLowerCase();
+    const order_id   = getOrderInfo.order_id;
+
+    coinoneAPI.myOrderInformation(currency, order_id)
+      .then(res => {
+        if(res.data.errorCode === '0' || res.data.errorCode === '104') {
+          callback(null, res.data);
+        }
+        else {
+          callback(ErrorCode[res.data.errorCode]);
+        }
+      });
+
+  }
+
 }
-
-
-

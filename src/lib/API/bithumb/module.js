@@ -7,7 +7,7 @@ const BASE_URL = 'https://api.bithumb.com';
 
 module.exports = {
 
-  getBalance : function (ACCESS_TOKEN, SECRET_KEY, cb) {
+  getBalance : (ACCESS_TOKEN, SECRET_KEY, callback) => {
     const api_private_info = {
       apiKey : ACCESS_TOKEN,
       secretKey : SECRET_KEY
@@ -26,10 +26,10 @@ module.exports = {
       formData : req_query
       },(err, res, result) => {
         if(err) {
-          cb(err);
+          callback(err);
         }
         else {
-          cb(null, result);
+          callback(null, result);
         } 
 
       });
@@ -49,7 +49,7 @@ module.exports = {
       order_currency : getOrderInfo.coin.toUpperCase(),
       payment_currency: 'KRW',
       units : getOrderInfo.volume,
-      type  : getOrderInfo.side.toUpperCase() === 'BUY' ? 'ask' : 'bid',
+      type  : getOrderInfo.side.toUpperCase() === 'BUY' ? 'bid' : 'ask',
       price : getOrderInfo.price
     }
     
@@ -63,19 +63,95 @@ module.exports = {
           callback(err);
         }
         else {
-          let parseJson = JSON.parse(result);
+          const parseJson = JSON.parse(result);
 
           if(ErrorCode[parseJson.status]) {
             callback(`${parseJson.message}`)
           }
-          else {
-            callback(null, result);
+          else {            
+            callback(null, parseJson);
           }
 
         } 
 
       });
 
+  },
+
+  getOrderInfo : (getOrderInfo, callback) => {
+
+    const api_private_info = {
+      apiKey : getOrderInfo.apikey,
+      secretKey : getOrderInfo.apisecret
+    }
+
+    const req_query = {
+      endpoint : '/info/orders',
+      order_id : getOrderInfo.order_id,
+      type     : getOrderInfo.side === 'BUY' ? 'bid' : 'ask',
+      currency : getOrderInfo.currency
+    }
+
+
+    REQUEST({
+      method : 'POST',
+      uri : `${BASE_URL}${req_query.endpoint}`,
+      headers : make_header(req_query, api_private_info),
+      formData : req_query
+      },(err, res, result) => {
+        if(err) {
+          callback(err);
+        }
+        else {
+          const parseJson = JSON.parse(result);
+
+          if(parseJson.status !== '5600' && ErrorCode[parseJson.status]) {
+            callback(`${parseJson.message}`)
+          }
+          else {
+            callback(null, parseJson);
+          }
+        } 
+
+    });
+  },
+
+  getOrderDoneInfo : (getOrderInfo, callback) => {
+
+    const api_private_info = {
+      apiKey : getOrderInfo.apikey,
+      secretKey : getOrderInfo.apisecret
+    }
+
+    const req_query = {
+      endpoint : '/info/order_detail',
+      order_id : getOrderInfo.order_id,
+      type     : getOrderInfo.side === 'BUY' ? 'bid' : 'ask',
+      currency : getOrderInfo.currency
+    }
+
+
+    REQUEST({
+      method : 'POST',
+      uri : `${BASE_URL}${req_query.endpoint}`,
+      headers : make_header(req_query, api_private_info),
+      formData : req_query
+      },(err, res, result) => {
+        if(err) {
+          callback(err);
+        }
+        else {
+          const parseJson = JSON.parse(result);
+
+          if(parseJson.status !== '5600' && ErrorCode[parseJson.status]) {
+            callback(`${parseJson.message}`)
+          }
+          else {
+            callback(null, parseJson);
+          }
+        } 
+
+    });
   }
 
 }
