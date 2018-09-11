@@ -26,6 +26,7 @@
     "joi": "^13.6.0",
     "jsonwebtoken": "^8.3.0",
     "korbit-node-client": "^1.0.4",
+    "lodash": "^4.17.10",
     "morgan": "^1.9.0",
     "mysql": "^2.16.0",
     "pbkdf2-password": "^1.2.1",

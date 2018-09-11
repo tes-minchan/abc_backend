@@ -77,4 +77,27 @@ module.exports = {
     }
   },
 
+  getMarketEnv : function (req, res, next) {
+    const userinfo = {
+      uuid: req.decoded.uuid
+    };
+
+    async.waterfall(
+      [
+        db.getConnection, 
+        async.apply(userauth.queryMarketEnv, userinfo)
+      ],
+      function(err, connection, result) {
+        connection.release();
+
+        if (err) {
+          res.status(403).json(utils.resFail(err.description));
+        } else {
+          res.status(200).json(utils.resSuccess(result));
+        }
+      }
+    );
+
+  }
+
 };

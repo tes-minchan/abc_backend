@@ -4,6 +4,7 @@ const hasher = pbkdf2_pwd();
 const jwt = require('jsonwebtoken');
 const config = require('config');
 const uuidv1 = require('uuid/v1');
+const _ = require('lodash');
 
 var ERR_MSG = {
   title : null,
@@ -140,4 +141,37 @@ module.exports = {
         }
     });
   },
+
+  queryMarketEnv : function(userinfo, connection, callback) {
+    const marketList = ['BITHUMB', 'COINONE', 'GOPAX', 'UPBIT'];
+    let sql_query = "";
+
+    marketList.forEach(item => {
+      sql_query += `SELECT * FROM subs_${item.toLowerCase()} WHERE uuid = '${userinfo.uuid}';`;
+    })
+    
+    db.doMultiQuery(connection, sql_query, (err, connection, results) => {
+      if(err) {
+        console.log("queryMarketEnv Error", err);
+        callback(err);
+      }
+      else {
+        const returnData = results.map((item, index) => {
+          delete item[0].uuid;
+
+          return {
+            market : marketList[index],
+            subscribe : _.map(item[0], (status, coin) => {
+              return {
+                name : coin,
+                status : status
+              };
+            })
+          }
+        })
+        callback(null, connection, returnData);
+      }
+    });
+
+  }
 }

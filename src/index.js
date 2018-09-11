@@ -2,8 +2,8 @@ const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
 const cors = require('cors')
-var logger = require('morgan');
-
+const logger = require('morgan');
+const config = require('config').webserverConfig;
 
 app.use(logger(function (tokens, req, res) {
   var body = req.body;
@@ -26,9 +26,9 @@ app.use(cors())
 
 require('./route')(app);
 
-// IDEA: WebServer Listen From 3000 Port.
-app.listen(3100, function(){
-  console.log("Connected , 3100 port !!!");
+// IDEA: WebServer Listen From Port.
+app.listen(config.port, function(){
+  console.log(`Connected , ${config.port} port !!!`);
 });
 
 
