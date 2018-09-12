@@ -142,7 +142,7 @@ module.exports = {
     });
   },
 
-  queryMarketEnv : function(userinfo, connection, callback) {
+  queryMarketSubs : function(userinfo, connection, callback) {
     const marketList = ['BITHUMB', 'COINONE', 'GOPAX', 'UPBIT'];
     let sql_query = "";
 
@@ -152,7 +152,7 @@ module.exports = {
     
     db.doMultiQuery(connection, sql_query, (err, connection, results) => {
       if(err) {
-        console.log("queryMarketEnv Error", err);
+        console.log("queryMarketSubs Error", err);
         callback(err);
       }
       else {
@@ -161,12 +161,13 @@ module.exports = {
 
           return {
             market : marketList[index],
-            subscribe : _.map(item[0], (status, coin) => {
-              return {
-                name : coin,
-                status : status
-              };
-            })
+            subscribe : item[0]
+            // subscribe : _.map(item[0], (status, coin) => {
+            //   return {
+            //     name : coin,
+            //     status : status
+            //   };
+            // })
           }
         })
         callback(null, connection, returnData);

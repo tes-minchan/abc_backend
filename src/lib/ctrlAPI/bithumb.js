@@ -34,9 +34,9 @@ module.exports = {
               toSendList[coinName] = {};
               checkDiffCoin = coinName;
             }
-  
+
             if(splitElement[0] === 'total') {
-              toSendList[coinName]['balance'] = Number(jsonParse[`total_${coinName}`]);
+              toSendList[coinName]['balance'] = Number(jsonParse[`total_${coinName.toLowerCase()}`]);
             }
             else if(splitElement[0] === 'in') {
               toSendList[coinName]['locked'] = Number(jsonParse[`in_use_${splitElement[2]}`]);

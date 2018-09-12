@@ -77,7 +77,7 @@ module.exports = {
     }
   },
 
-  getMarketEnv : function (req, res, next) {
+  getMarketSubs : function (req, res, next) {
     const userinfo = {
       uuid: req.decoded.uuid
     };
@@ -85,7 +85,7 @@ module.exports = {
     async.waterfall(
       [
         db.getConnection, 
-        async.apply(userauth.queryMarketEnv, userinfo)
+        async.apply(userauth.queryMarketSubs, userinfo)
       ],
       function(err, connection, result) {
         connection.release();

@@ -7,6 +7,6 @@ router
 // .get  ('/:id', authController.isLogin, authController.getUserInformation)
 .post ('/register', authController.register)
 .post ('/login', authController.login)
-.get  ('/market-env', authController.isLogin, authController.getMarketEnv)
+.get  ('/market-subs', authController.isLogin, authController.getMarketSubs)
 
 module.exports = router;
