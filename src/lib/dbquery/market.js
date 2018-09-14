@@ -89,7 +89,7 @@ module.exports = {
 
   getOrderStatus: (userinfo, connection, callback) => {
 
-    const sql_query = "SELECT market, order_id, currency, side, price, volume, status FROM order_info WHERE uuid = ? ORDER BY reg_date DESC";
+    const sql_query = "SELECT reg_date, market, order_id, currency, side, price, volume, status FROM order_info WHERE uuid = ? ORDER BY reg_date DESC";
     const params    = [userinfo.uuid];
 
     db.doQuery(connection, sql_query, params, (err, connection, results) => {
@@ -105,7 +105,7 @@ module.exports = {
   },
 
   getOrderDetail: (userinfo, connection, callback) => {
-    const sql_query = "SELECT order_id, market, currency, side, price, volume, fee, trade_funds FROM order_detail WHERE uuid = ? ORDER BY trade_date DESC";
+    const sql_query = "SELECT trade_date, order_id, market, currency, side, price, volume, fee, trade_funds FROM order_detail WHERE uuid = ? ORDER BY trade_date DESC";
     const params    = [userinfo.uuid];
 
     db.doQuery(connection, sql_query, params, (err, connection, results) => {
