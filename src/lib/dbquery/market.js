@@ -87,6 +87,39 @@ module.exports = {
     });
   },
 
+  getOrderStatus: (userinfo, connection, callback) => {
+
+    const sql_query = "SELECT market, order_id, currency, side, price, volume, status FROM order_info WHERE uuid = ? ORDER BY reg_date DESC";
+    const params    = [userinfo.uuid];
+
+    db.doQuery(connection, sql_query, params, (err, connection, results) => {
+      if(err) {
+        console.log("getOrderStatus Error", err);
+        callback("getOrderStatus Error", connection);
+      }
+      else {
+        userinfo['orderstatus'] = results;
+        callback(null, connection);
+      }
+    });
+  },
+
+  getOrderDetail: (userinfo, connection, callback) => {
+    const sql_query = "SELECT order_id, market, currency, side, price, volume, fee, trade_funds FROM order_detail WHERE uuid = ? ORDER BY trade_date DESC";
+    const params    = [userinfo.uuid];
+
+    db.doQuery(connection, sql_query, params, (err, connection, results) => {
+      if(err) {
+        console.log("getOrderDetail Error", err);
+        callback("getOrderDetail Error", connection);
+      }
+      else {
+        userinfo['orderdetail'] = results;
+        callback(null, connection);
+      }
+    });
+  },
+
   updateOrderinfo: (orderinfo, connection) => {
 
     const sql_query = "UPDATE order_info SET market = ?, currency = ?, side = ?, price = ?, volume = ?, remain_volume = ?, market_status = ? WHERE order_id = ?";

@@ -8,5 +8,6 @@ router
   .get("/all-balance", authController.isLogin, marketController.getAllBalance)
   .get("/order-update", authController.isLogin, marketController.updateOrderinfo)
   .post("/ordersend", authController.isLogin, marketController.sendOrder)
-
+  .get("/orderinfo-get", authController.isLogin, marketController.getOrderstatus)
+  .get("/orderdetail-get", authController.isLogin, marketController.getOrderdetail)
 module.exports = router;

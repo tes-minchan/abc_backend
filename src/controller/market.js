@@ -117,11 +117,51 @@ module.exports = {
         else {
           res.status(200).json(utils.resSuccess("success"));
         }
-
-
     });
 
   },
 
- 
+  getOrderstatus: function(req, res, next) {
+    const userinfo = {
+      uuid: req.decoded.uuid
+    };
+
+    async.waterfall(
+      [
+        db.getConnection, 
+        async.apply(dbQuery.getApiKeys, userinfo),
+        async.apply(dbQuery.getOrderStatus, userinfo),
+      ], (error, connection, result) =>  {
+        connection.release();
+        if(error) {
+          res.status(403).json(utils.resFail(error));
+        }
+        else {
+          console.log(userinfo.orderstatus);
+          res.status(200).json(utils.resSuccess(userinfo.orderstatus));
+        }
+    });
+  },
+
+  getOrderdetail: function(req, res, next) {
+    const userinfo = {
+      uuid: req.decoded.uuid
+    };
+
+    async.waterfall(
+      [
+        db.getConnection, 
+        async.apply(dbQuery.getApiKeys, userinfo),
+        async.apply(dbQuery.getOrderDetail, userinfo),
+      ], (error, connection, result) =>  {
+        connection.release();
+        if(error) {
+          res.status(403).json(utils.resFail(error));
+        }
+        else {
+          res.status(200).json(utils.resSuccess(userinfo.orderdetail));
+        }
+    });
+  }
+
 };
