@@ -139,8 +139,9 @@ module.exports = {
 
     let sql_query  = `UPDATE order_info SET status = 1, remain_volume = 0 WHERE order_id = '${orderinfo.order_id}';`;
         sql_query  += `INSERT INTO order_detail(trade_date, uuid, order_id, market, currency, side, price, volume, fee, trade_funds) `;
-        sql_query  += `VALUES(FROM_UNIXTIME(${orderinfo.trade_date}), '${orderinfo.uuid}', '${orderinfo.order_id}', '${orderinfo.market}', '${orderinfo.currency}', '${orderinfo.side}', '${orderinfo.price}', '${orderinfo.volume}', '${orderinfo.fee}', '${orderinfo.total}');`
+        sql_query  += `VALUES(FROM_UNIXTIME(${parseInt(orderinfo.trade_date / 1000)}), '${orderinfo.uuid}', '${orderinfo.order_id}', '${orderinfo.market}', '${orderinfo.currency}', '${orderinfo.side}', '${orderinfo.price}', '${orderinfo.volume}', '${orderinfo.fee}', '${orderinfo.total}');`
 
+    
     db.doMultiQuery(connection, sql_query, (err, connection, results) => {
       connection.release();
       if(err) {

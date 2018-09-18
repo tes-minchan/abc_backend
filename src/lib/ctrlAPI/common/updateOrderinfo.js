@@ -145,7 +145,6 @@ module.exports = {
           reject(error);
         }
         else {
-
           if(result.status === 'completed') {
 
             const _insertOrder = {
@@ -196,22 +195,25 @@ module.exports = {
         }
         else {
           if(result.state === 'done') {
+
+            let _insertOrder = {
+              uuid       : orderinfo.uuid,
+              order_id   : result.uuid,
+              market     : orderinfo.market, 
+              trade_date : Date.parse(result.created_at),
+              currency   : result.market.split('-')[1],
+              side       : result.side === 'ask' ? "SELL" : "BUY",
+              volume     : result.volume,
+              price      : result.price,
+              fee        : result.paid_fee
+            }
+
+            _insertOrder.total = 0;
             result.trades.forEach(element => {
-              const _insertOrder = {
-                uuid       : orderinfo.uuid,
-                order_id   : result.id,
-                market     : orderinfo.market, 
-                trade_date : Date.parse(element.created_at),
-                currency   : element.market.split('-')[1],
-                side       : element.side === 'ask' ? "SELL" : "BUY",
-                volume     : element.volume,
-                price      : element.price,
-                fee        : element.side === 'ask' ? element.ask_fee : element.bid_fee,
-                total      : element.funds
-              }
-              
-              async.waterfall([db.getConnection, async.apply(dbQuery.insertDoneOrder, _insertOrder)]);
+              _insertOrder.total += Number(element.funds);  
             });
+            
+            async.waterfall([db.getConnection, async.apply(dbQuery.insertDoneOrder, _insertOrder)]);
             resolve();
 
           }
@@ -227,7 +229,6 @@ module.exports = {
               market_status : result.state,
               status        : result.state === 'cancel' ? 1 : 0
             }
-            console.log(_updateOrder);
 
             async.waterfall([db.getConnection, async.apply(dbQuery.updateOrderinfo, _updateOrder)]);
             resolve();
