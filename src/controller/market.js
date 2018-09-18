@@ -137,7 +137,6 @@ module.exports = {
           res.status(403).json(utils.resFail(error));
         }
         else {
-          console.log(userinfo.orderstatus);
           res.status(200).json(utils.resSuccess(userinfo.orderstatus));
         }
     });
