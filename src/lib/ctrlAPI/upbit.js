@@ -58,17 +58,23 @@ module.exports = {
             callback(error);
           } 
           else {
-            const saveOrderinfo = {
-              market   : 'UPBIT',
-              uuid     : userinfo.uuid,
-              order_id : result.uuid,
-              side     : userinfo.side,
-              currency : userinfo.coin,
-              price    : userinfo.price,
-              volume   : userinfo.volume
+            if(result.error) {
+              callback(result.error);
+
             }
-            ctrlOrderinfo.updateOrderID(saveOrderinfo);
-            callback(null, result);
+            else {
+              const saveOrderinfo = {
+                market   : 'UPBIT',
+                uuid     : userinfo.uuid,
+                order_id : result.uuid,
+                side     : userinfo.side,
+                currency : userinfo.coin,
+                price    : userinfo.price,
+                volume   : userinfo.volume
+              }
+              ctrlOrderinfo.updateOrderID(saveOrderinfo);
+              callback(null, result);
+            }
           }
         }
       );
