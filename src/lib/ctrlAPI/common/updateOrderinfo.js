@@ -194,26 +194,28 @@ module.exports = {
           console.log(error);
         }
         else {
+
           if(result.state === 'done') {
 
-            let _insertOrder = {
-              uuid       : orderinfo.uuid,
-              order_id   : result.uuid,
-              market     : orderinfo.market, 
-              trade_date : Date.parse(result.created_at),
-              currency   : result.market,
-              side       : result.side === 'ask' ? "SELL" : "BUY",
-              volume     : result.volume,
-              price      : result.price,
-              fee        : result.paid_fee
-            }
-
-            _insertOrder.total = 0;
             result.trades.forEach(element => {
-              _insertOrder.total += Number(element.funds);  
+
+              let _insertOrder = {
+                uuid       : orderinfo.uuid,
+                order_id   : result.uuid,
+                market     : orderinfo.market, 
+                trade_date : Date.parse(result.created_at),
+                currency   : element.market,
+                side       : result.side === 'ask' ? "SELL" : "BUY",
+                volume     : element.volume,
+                price      : element.price,
+                fee        : (result.paid_fee / result.trades_count),
+                total      : element.funds
+              }
+
+              async.waterfall([db.getConnection, async.apply(dbQuery.insertDoneOrder, _insertOrder)]);
+
             });
             
-            async.waterfall([db.getConnection, async.apply(dbQuery.insertDoneOrder, _insertOrder)]);
             resolve();
 
           }
