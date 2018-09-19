@@ -87,7 +87,7 @@ module.exports = {
           reject(error);
         }
         else {
-          if(result.errorCode) {
+          if(Number(result.errorCode)) {
             // Order Cancelled.
             const _updateOrder = {
               order_id : orderinfo.order_id,
@@ -97,14 +97,13 @@ module.exports = {
             resolve();
           }
           else {
-            
             if(result.status === 'filled') {
               // Order Completed.
               const _insertOrder = {
                 uuid       : orderinfo.uuid,
                 order_id   : result.info.orderId,
                 market     : orderinfo.market, 
-                trade_date : Number(result.info.timestamp),
+                trade_date : Number(result.info.timestamp) * 1000,
                 currency   : result.info.currency,
                 side       : result.info.type === 'ask' ? "SELL" : "BUY",
                 volume     : result.info.qty,
@@ -112,6 +111,7 @@ module.exports = {
                 fee        : result.info.fee,
                 total      : Number(result.info.price) * Number(result.info.qty)
               }
+
               async.waterfall([db.getConnection, async.apply(dbQuery.insertDoneOrder, _insertOrder)]);
                           
             }
