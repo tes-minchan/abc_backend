@@ -156,7 +156,7 @@ module.exports = {
               side       : result.side.toUpperCase(),
               volume     : result.amount,
               price      : result.price,
-              fee        : (result.amount * 0.0004 * reslut.price),
+              fee        : (result.amount * 0.0004 * result.price),
               total      : Number(result.price) * Number(result.amount)
             }
 
