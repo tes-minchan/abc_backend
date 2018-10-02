@@ -15,8 +15,7 @@ module.exports = {
 
     const req_query = {
       endpoint : '/info/balance',
-      order_currency : 'ALL',
-      payment_currency: 'KRW'
+      currency : 'ALL'
     }
 
     REQUEST({

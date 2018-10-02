@@ -32,14 +32,16 @@ module.exports = {
     GopaxAPI.sendOrder(payload)
       .then(result => {
         if(result.errorCode) {
+          console.log(result);
           callback(ErrorCode[result.errorCode])
         }
         else {
+          console.log(result);
           callback(null, result);
         }
       })
       .catch(error => {
-        callback(error);
+        console.log(error);
       });
 
   },
